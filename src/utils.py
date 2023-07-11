@@ -1,7 +1,16 @@
 import numpy as np
 from scipy.optimize import nnls
 
-def get_pointwise_loss(ws, pw_dist_mat):
+def get_pointwise_loss(ws: np.array, pw_dist_mat: np.array) -> float:
+    """Get loss for point-wise regularization function. Adding this to non-negative least squares loss yields total loss for parameters.
+
+    Args:
+        ws (np.array): vector of fitted weights/parameter estimates in non-negative regression model.
+        pw_dist_mat (np.array): model distances from each other in.
+
+    Returns:
+        loss: Total loss for point-wise regulatization 
+    """
     W = np.outer(ws,ws)
     w_dist_mat = W*pw_dist_mat
     loss = np.sum(w_dist_mat)/2
@@ -165,24 +174,3 @@ if __name__ == '__main__':
     ws, tl, testl = GD(y_tr_stnd, X_tr_stnd, y_test_stnd, X_test_stnd, ws_unif, pw_mdist_mat, 1e-5, 1e3, 10, 5, 'pw')
     ws_n = np.abs(ws)/np.sum(np.abs(ws))
     indices = np.flip(np.argsort(ws_n))
-    
-#    for i in np.flip(indices):
-#        print(model_names[i])
-    
-    # ws_ns, tl_ns, testl_ns = SGD(y_tr[:100], X_tr[:,:100], y_test[:100], X_test[:,:100], ws_unif, hist_mtas, 1e-16, 0, 0, 100)
-# =============================================================================
-#     weights = np.array([.2, .2, .6])
-#     dist_mat = np.array([[0,1,7],[1,0,7],[7,7,0]])
-#     get_pointwise_loss_grad(weights, dist_mat)
-#     x = np.ones(3)
-#     Y = np.ones([3,3])
-#     ws = x/3
-#     pw_dist_mat = np.ones([3,3]) - np.eye(3)
-#     l = 1
-#     print(get_OLS_grad(x, Y, ws))
-#     print(update_pwl_grad(x, Y, ws, pw_dist_mat, l, l))
-#     ws = np.zeros(30)
-#     ws[1] = 1
-#     get_stdev_loss(ws, hist_data_stnd)
-#     
-# =============================================================================
