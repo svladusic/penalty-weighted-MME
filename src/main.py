@@ -1,5 +1,6 @@
 import os
 import numpy as np
+from scipy.optimize import nnls
 import matplotlib.pyplot as plt
 from utils import GD
 

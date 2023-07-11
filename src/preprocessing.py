@@ -41,7 +41,7 @@ def get_train_test_sets(inp_array, tp=0.2, vp=0.1):
     return train_set, val_set, test_set
 
 if __name__ == "__main__":    
-    # CMIP_dir = !!! PUT DIRECTORY FOR CMIP DATA HERE !!! 
+    CMIP_dir = "../data/CMIP6 TAS" 
     cutoff_1980 = 12*16*(1980 - 1850)
     cutoff_2014 = 12*16*(2014 - 1850 + 1)
     
