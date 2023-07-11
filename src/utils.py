@@ -6,10 +6,10 @@ def get_pointwise_loss(ws: np.array, pw_dist_mat: np.array) -> float:
 
     Args:
         ws (np.array): vector of fitted weights/parameter estimates in non-negative regression model.
-        pw_dist_mat (np.array): model distances from each other in.
+        pw_dist_mat (np.array): model point-wise distances.
 
     Returns:
-        loss: Total loss for point-wise regulatization 
+        loss (float): Total loss for point-wise regulatization function.
     """
     W = np.outer(ws,ws)
     w_dist_mat = W*pw_dist_mat
@@ -17,12 +17,21 @@ def get_pointwise_loss(ws: np.array, pw_dist_mat: np.array) -> float:
     return loss
 
 
-def get_pointwise_loss_grad(ws, pw_dist_mat):
+def get_pointwise_loss_grad(ws: np.array, pw_dist_mat:np.array) -> float:
+    """Get gradient for point-wise loss function given point-wise distances and nnls weights. Needed to perform gradient descent.
+
+    Args:
+        ws (np.array): vector of fitted weights/parameter estimates in non-negative regression model.
+        pw_dist_mat (np.array): model point-wise distances.
+
+    Returns:
+        loss_grad (float): vector of loss gradient components from point-wise regulatization function. 
+    """
     n = np.shape(pw_dist_mat)[0]
-    loss = np.zeros(n)
+    loss_grad = np.zeros(n)
     for i in range(n):
-        loss[i] = np.sum(np.abs(np.delete(ws, i))/np.delete(pw_dist_mat[i,:], i))  
-    return loss
+        loss_grad[i] = np.sum(np.abs(np.delete(ws, i))/np.delete(pw_dist_mat[i,:], i))  
+    return loss_grad
 
 
 def get_stdev_loss(ws, dist_array):
