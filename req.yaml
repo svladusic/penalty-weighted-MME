@@ -8,5 +8,4 @@ dependencies:
   - numpy
   - pip
   - matplotlib
-  - os
   - xarray
