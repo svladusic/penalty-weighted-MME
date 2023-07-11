@@ -2,14 +2,14 @@ import numpy as np
 from scipy.optimize import nnls
 
 def get_pointwise_loss(ws: np.array, pw_dist_mat: np.array) -> float:
-    """Get loss for point-wise regularization function. Adding this to non-negative least squares loss yields total loss for parameters.
+    """Get loss for point-wise regularization function. Adding this to non-negative least squares loss yields total loss for gradient descent.
 
     Args:
         ws (np.array): vector of fitted weights/parameter estimates in non-negative regression model.
         pw_dist_mat (np.array): point-wise distances between models in latent space.
 
     Returns:
-        loss (float): Total loss for point-wise regulatization function.
+        loss (float): total loss for point-wise regulatization function.
     """
     W = np.outer(ws,ws)
     w_dist_mat = W*pw_dist_mat
@@ -35,14 +35,14 @@ def get_pointwise_loss_grad(ws: np.array, pw_dist_mat:np.array) -> np.array:
 
 
 def get_stdev_loss(ws:np.array, dist_mat:np.array) -> float:
-    """Get loss for standard deviation regularization function. Adding this to non-negative least squares loss yields total loss for parameters.
+    """Get loss for standard deviation regularization function. Adding output to non-negative least squares loss yields total loss for gradient descent.
 
     Args:
         ws (np.array): vector of fitted weights/parameter estimates in non-negative regression model.
         dist_mat (np.array): distances between models in latent space.
 
     Returns:
-        loss (float): Total loss for standard deviation regulatization function.
+        loss (float): total loss for standard deviation regulatization function.
     """
     w_norm = np.sum(ws)
     mu = np.mean(dist_mat[-1], axis=0)
@@ -71,28 +71,44 @@ def get_stdev_loss_grad(ws:np.array, dist_mat:np.array) -> np.array:
     return loss_grad
 
 
-def get_family_loss(ws, families):
-    loss = 0
-    
-    for f in families:
-        loss += np.sum(ws[f])/np.sum(np.delete(ws, f))
-    
+def get_family_loss(ws: np.array, families:list) -> float:
+    """Get loss for standard deviation regularization function. Adding output to non-negative least squares loss yields total loss for gradient descent.
+
+    Args:
+        ws (np.array): vector of fitted weights/parameter estimates in non-negative regression model.
+        families (list): list of lists. each internal list inside specifies whether or not a CMAP model is included in some model family.
+
+    Returns:
+        loss (float): total loss for standard deviation regulatization function.  
+    """
+    family_losses = [np.sum(ws[f])/np.sum(np.delete(ws, f)) for f in families]
+    loss = sum(family_losses)
     return loss        
 
 
-def get_family_grad(ws, families):
+def get_family_loss_grad(ws: np.array, families: list) -> np.array:
+    """Get gradient for point-wise loss function given family regularization function and nnls weights. Needed to perform gradient descent.
+
+    Args:
+        ws (np.array): vector of fitted weights/parameter estimates in non-negative regression model.
+        families (list): list of lists. each internal list inside specifies whether or not a CMAP model is included in some model family.
+
+    Returns:
+        loss_grad (np.array): vector of loss gradient components from family regulatization function. 
+    """
+    #TODO: Refactor with list comprehension for ease of understanding.
     n = np.size(ws)
-    grads = np.zeros(n)
+    loss_grad = np.zeros(n)
     for k in range(n):
         for f in families:
             num = np.sum(ws[f])
             denom = np.sum(np.delete(ws, f))**2
             if k in f:
-                grads[k] += 1
+                loss_grad[k] += 1
             else:
-                grads[k] += -num/denom
-    grads = grads*np.sign(ws)
-    return grads
+                loss_grad[k] += -num/denom
+    loss_grad = loss_grad*np.sign(ws)
+    return loss_grad
 
 
 def get_OLS_loss(x, Y, ws):
@@ -123,7 +139,7 @@ def full_loss_std(x, Y, ws, dist_mat, l1, l2):
 
 def update_std_grad(x, Y, ws, families, l1, l2):
     return get_OLS_grad(x, Y, ws) + \
-           l1*get_family_grad(ws, families) + l2*ws 
+           l1*get_family_loss_grad(ws, families) + l2*ws 
 
 def full_loss_fam(x, Y, ws, families, l1, l2):
     return get_OLS_loss(x, Y, ws) + l1*get_family_loss(ws, families) + \
@@ -132,7 +148,7 @@ def full_loss_fam(x, Y, ws, families, l1, l2):
 
 def update_fam_grad(x, Y, ws, families, l1, l2):
     return get_OLS_grad(x, Y, ws) + \
-           l1*get_family_grad(ws, families) + l2*ws 
+           l1*get_family_loss_grad(ws, families) + l2*ws 
            
            
 def get_full_loss(x, Y, ws, array, l1, l2, loss=None):
