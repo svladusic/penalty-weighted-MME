@@ -6,6 +6,7 @@ from scipy.spatial.distance import pdist, squareform
 def get_monthly_flattened_model(models):
     np_array_models = []
     mu_annual_vals = []
+
     for model in models:
         tas_vals = model.tas.values
         con_tas = np.concatenate(tas_vals, axis=0)
@@ -15,6 +16,7 @@ def get_monthly_flattened_model(models):
         mu_monthly = np.mean(tas_vals, axis=(1,2))
         mu_annual = np.mean(mu_monthly.reshape(-1, 12), axis=1)
         mu_annual_vals += [mu_annual]
+
     return np_array_models, mu_annual_vals
 
 
