@@ -111,25 +111,74 @@ def get_family_loss_grad(ws: np.array, families: list) -> np.array:
     return loss_grad
 
 
-def get_OLS_loss(x, Y, ws):
+def get_OLS_loss(x: np.array, Y: np.array, ws: np.array) -> float:
+    """Get ordinary square loss for predicted/forecasted response values and their actual values
+
+    Args:
+        x (np.array): Vector of actual response values for training data. (Why is it x????)
+        Y (np.array): Design matrix of training data set.
+        ws (np.array): Vector of weights/parameter estimates in regression model.
+
+    Returns:
+        loss (float): loss value given by OLS.
+    """
     N = np.shape(Y)[1]
-    return 1/(2*N)*np.linalg.norm(x-np.sum(np.abs(ws.T)@Y, axis=0))**2
+    loss = 1/(2*N)*np.linalg.norm(x-np.sum(np.abs(ws.T)@Y, axis=0))**2
+    return loss
 
 
-def get_OLS_grad(x, Y, ws):
+def get_OLS_grad(x: np.array, Y: np.array, ws: np.array) -> np.array:
+    """Get gradient for ordinary least squares given regression model parameters/weights. Needed to perform gradient descent.
+
+    Args:
+        x (np.array): Vector of actual response values for training data. (Why is it x????)
+        Y (np.array): Design matrix of training data set.
+        ws (np.array): vector of weights/parameter estimates in regression model.
+
+    Returns:
+        loss_grad (np.array): vector of loss gradient components from ordinary least squares. 
+    """
     N = np.shape(Y)[1]
-    return -np.sign(ws)*N**(-1) * \
-            np.sum(np.abs(x-np.sum(np.abs(ws.T)@Y, axis=0))*Y,axis=1)
+    loss_grad = -np.sign(ws)*N**(-1)
+    loss_grad *= np.sum(np.abs(x-np.sum(np.abs(ws.T)@Y, axis=0))*Y,axis=1)
+    return loss_grad
 
 
-def full_loss_pw(x, Y, ws, pw_dist_mat, l1, l2):
-    return get_OLS_loss(x, Y, ws) + l1*get_pointwise_loss(ws, pw_dist_mat) + \
-           l2*np.linalg.norm(ws)**2
+def full_loss_pw(x: np.array, Y: np.array, ws: np.array, pw_dist_mat: np.array, l1: float, l2: float) -> float:
+    """Returns the value of the point-wise loss function given a training data set and the regularization hyperparameter values.
+
+    Args:
+        x (np.array): vector of actual response values for training data. (Why is it x????)
+        Y (np.array): design matrix of training data set.
+        ws (np.array): vector of weights/parameter estimates in regression model.
+        pw_dist_mat (np.array): point-wise distances between models in latent space.
+        l1 (float): point-wise component for regularization term of the loss function.
+        l2 (float): l2/ridge regression component for regularization term of the loss function.
+
+    Returns:
+        total_loss: value of the full point-wise loss function for the training set (Y,x)
+    """
+    total_loss = get_OLS_loss(x, Y, ws) + l1*get_pointwise_loss(ws, pw_dist_mat)
+    total_loss += l2*np.linalg.norm(ws)**2
+    return total_loss
 
 
-def update_pwl_grad(x, Y, ws, pw_dist_mat, l1, l2):
-    return get_OLS_grad(x, Y, ws) + \
-           l1*get_pointwise_loss_grad(ws, pw_dist_mat) + l2*ws 
+def update_pwl_grad(x: np.array, Y: np.array, ws: np.array, pw_dist_mat: np.array, l1: float, l2: float) -> np.array:
+    """Returns the gradient of the point-wise loss function given a training data set and the regularization hyperparameter values.
+
+    Args:
+        x (np.array): vector of actual response values for training data. (Why is it x????)
+        Y (np.array): design matrix of training data set.
+        ws (np.array): vector of weights/parameter estimates in regression model.
+        pw_dist_mat (np.array): point-wise distances between models in latent space.
+        l1 (float): point-wise component for regularization term of the loss function.
+        l2 (float): l2/ridge regression component for regularization term of the loss function.
+
+    Returns:
+        total_loss_grad: gradient vector of the full point-wise loss function with respect to model parameters for the training set (Y,x)
+    """
+    total_loss = get_OLS_grad(x, Y, ws) + l1*get_pointwise_loss_grad(ws, pw_dist_mat) + l2*ws 
+    return total_loss
 
 
 def full_loss_std(x, Y, ws, dist_mat, l1, l2):
@@ -162,7 +211,7 @@ def get_full_loss(x, Y, ws, array, l1, l2, loss=None):
 
 def grad_desc(x, Y, ws, array, lr, l1, l2, loss=None):
     if not loss:
-        loss = 'std'
+        loss = 'std'    
     if loss == 'pw':
         ws = ws - lr*update_pwl_grad(x, Y, ws, array, l1, l2)
     else:
