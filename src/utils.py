@@ -181,12 +181,39 @@ def update_pwl_grad(x: np.array, Y: np.array, ws: np.array, pw_dist_mat: np.arra
     return total_loss
 
 
-def full_loss_std(x, Y, ws, dist_mat, l1, l2):
-    return get_OLS_loss(x, Y, ws) + l1*get_stdev_loss(ws, dist_mat) + \
-           l2*np.linalg.norm(ws)**2
+def full_loss_std(x: np.array, Y: np.array, ws: np.array, dist_mat: np.array, l1: float, l2: float) -> float:
+    """Returns the value of the standard deviation loss function given a training data set and the regularization hyperparameter values.
+
+    Args:
+        x (np.array): vector of actual response values for training data. (Why is it x????)
+        Y (np.array): design matrix of training data set.
+        ws (np.array): vector of weights/parameter estimates in regression model.
+        dist_mat (np.array): distances between models in latent space.
+        l1 (float): point-wise component for regularization term of the loss function.
+        l2 (float): l2/ridge regression component for regularization term of the loss function.
+
+    Returns:
+        total_loss: value of the full point-wise loss function for the training set (Y,x)
+    """
+    total_loss = get_OLS_loss(x, Y, ws) + l1*get_stdev_loss(ws, dist_mat)
+    total_loss += l2*np.linalg.norm(ws)**2
+    return total_loss
 
 
-def update_std_grad(x, Y, ws, families, l1, l2):
+def update_std_grad(x: np.array, Y: np.array, ws: np.array, pw_dist_mat: np.array, l1: float, l2: float) -> np.array:
+    """Returns the gradient of standard deviation    loss function given a training data set and the regularization hyperparameter values.
+
+    Args:
+        x (np.array): vector of actual response values for training data. (Why is it x????)
+        Y (np.array): design matrix of training data set.
+        ws (np.array): vector of weights/parameter estimates in regression model.
+        pw_dist_mat (np.array): point-wise distances between models in latent space.
+        l1 (float): point-wise component for regularization term of the loss function.
+        l2 (float): l2/ridge regression component for regularization term of the loss function.
+
+    Returns:
+        total_loss_grad: gradient vector of the full point-wise loss function with respect to model parameters for the training set (Y,x)
+    """
     return get_OLS_grad(x, Y, ws) + \
            l1*get_family_loss_grad(ws, families) + l2*ws 
 
