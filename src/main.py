@@ -1,11 +1,12 @@
 import os
 import numpy as np
+from scipy.optimize import nnls
 import matplotlib.pyplot as plt
 from utils import GD
 
 plt.rcParams.update({'font.size': 22})
 
-# os.chdir(!!!PLACE DIRECTORY FOR PREPROCESSED DATA HERE!!!)
+os.chdir("../data/CSVs")
 
 def get_normalized_weights(ws):
     return np.abs(ws)/np.sum(np.abs(ws))

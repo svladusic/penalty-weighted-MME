@@ -1,0 +1,11 @@
+name: pen_weighted_mme
+
+channels:
+  - conda-forge
+  
+dependencies:
+  - scipy
+  - numpy
+  - pip
+  - matplotlib
+  - xarray
