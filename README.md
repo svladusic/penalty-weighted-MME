@@ -82,12 +82,11 @@ However, the results of the family/odds MME form a proof of concept for the PWF.
 #### Some Conclusions
 The relevant question for the report is whether or not the PWF can provide MME weights which 'reasonably' capture model performance and interdependence. Ultimately, the report concludes that the PWF *has* not provided such a set of weights in the foregoing analysis, but that the results indicate the framework *could* do so. The data analyzed in the report only consists in TAS data, but noted by Knutti, different models are better at forecasting different variables. Consequently, any data set providing reasonable MME weights would contain data on many more climactic variables. However, the family/odds penalty function adequately captures some form of model interdependence given the limiting behaviour present in the plots of the *Results* subsection. In particular, it is clear that by raising or lowering the importance of the penalty function, the relevance of model interdependence increases or decreases, respectively. This suggests when both components of the loss function are close to equally weighed, that the resulting loss function accounts for results and model interdependence. Perhaps an MME given by the PWF and the family/odds function would provide a useful sets of weights if trained on more robust data, and if there were a more systematic means for testing our rather slippery notion of ‘reasonability’.
 
-#### Footnotes
 [^1]:  Do note that the original paper presents four issues with the democratic approach. However, only two of these points were essential to cover in this exposition.
 
 [^2]: Although figure 5 in \[1\] strongly suggests that climWIP nevertheless does a good job of representing a priori interdependence measures.
 
-[^3]:  The relevant hyperparameter, $\lambda$, is entirely analogous to L1/L2 regularization hyperparameters. More details concerning the hyperparameter can be found in the full report. 
+[^3]:  The relevant hyperparameter, lambda, is entirely analogous to L1/L2 regularization hyperparameters. More details concerning the hyperparameter can be found in the full report. 
 
 #### References
 \[1\] L. Brunner, A. G. Pendergrass, F. Lehner, A. L. Merrifield, R. Lorenz, and R. Knutti. Reduced global warming from cmip6 projections when weighting models by performance and independence. *Earth System Dynamics*, 11(4):995–1012, 2020.
