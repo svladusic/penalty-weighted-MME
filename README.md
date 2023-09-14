@@ -65,20 +65,19 @@ However, the results of the family/odds MME form a proof of concept for the PWF.
 
 |![No Penalty](assets/img/family_lambda_0.png)  |
 |:---:|
-|*Weights of each CMIP6 model component with no penalty function. The weights correspond to
-the coefficients found using non-negative least squares. These weights are found via gradient descent*|
+|*Weights of each CMIP6 model component with no penalty function. The weights correspond to the coefficients found using non-negative least squares. These weights are found via gradient descent.*|
 
 |![Equal Penalty](assets/img/family_lambda_1.png)  |
 |:---:|
-|*Weights of each CMIP6 model component when including the family/odds penalty function. Here the error and penalty functions have equal importance in the loss function *|
+|*Weights of each CMIP6 model component when including the family/odds penalty function. Here the error and penalty functions have equal importance in the loss function.*|
 
 |![Penalty 10 Times](assets/img/family_lambda_10.png)  |
 |:---:|
-|*Weights of each CMIP6 model component when including the family/odds penalty function. Here the penalty function is ten times as important as the error function when computing the loss*|
+|*Weights of each CMIP6 model component when including the family/odds penalty function. Here the penalty function is ten times as important as the error function when computing the loss.*|
 
 |![Penalty 100 Times](assets/img/family_lambda_100.png)  |
 |:---:|
-|*Weights of each CMIP6 model component when including the family/odds penalty function. Here the penalty function is one hundred times as important as the error function when computing the loss*|
+|*Weights of each CMIP6 model component when including the family/odds penalty function. Here the penalty function is one hundred times as important as the error function when computing the loss.*|
 
 #### Some Conclusions
 The relevant question for the report is whether or not the PWF can provide MME weights which 'reasonably' capture model performance and interdependence. Ultimately, the report concludes that the PWF *has* not provided such a set of weights in the foregoing analysis, but that the results indicate the framework *could* do so. The data analyzed in the report only consists in TAS data, but noted by Knutti, different models are better at forecasting different variables. Consequently, any data set providing reasonable MME weights would contain data on many more climactic variables. However, the family/odds
