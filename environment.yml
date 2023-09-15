@@ -1,4 +1,4 @@
-name: pen_weighted_mme
+name: PW_MME
 
 channels:
   - conda-forge
